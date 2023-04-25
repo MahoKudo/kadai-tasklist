@@ -9,6 +9,7 @@ class TasksController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @return\Illuminate\Http\Response
      */
      // getでmessages/にアクセスされた場合の「一覧表示処理」
     public function index()
@@ -21,6 +22,8 @@ class TasksController extends Controller
 //配列型の構造[キー値=>値]でキー名を指定すると値を取得出来るようになる
     /**
      * Show the form for creating a new resource.
+     * 
+     * @return\Illuminate\Http\Response
      */
     // getでmessages/createにアクセスされた場合の「新規登録画面表示処理」
     public function create()
@@ -33,6 +36,8 @@ class TasksController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
      // postでmessages/にアクセスされた場合の「新規登録処理」
     public function store(Request $request) //送られてきたフォームの内容は$requestに入っている。
@@ -42,6 +47,7 @@ class TasksController extends Controller
             'content' => 'required|max:255',
             'status' => 'required|max:255', //カラム追加に伴い記入
             ]);
+            
         //タスクを作成
         $task = new Task;
         $task->status = $request->status; //カラム追加に伴い記入
@@ -55,6 +61,9 @@ class TasksController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
      // getでmessages/（任意のid）にアクセスされた場合の「取得表示処理」
     public function show(string $id)
@@ -68,6 +77,9 @@ class TasksController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
       // getでmessages/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
     public function edit(string $id)
@@ -81,6 +93,10 @@ class TasksController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
      // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
     public function update(Request $request, string $id)
@@ -104,6 +120,9 @@ class TasksController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
       // deleteでmessages/（任意のid）にアクセスされた場合の「削除処理」
     public function destroy(string $id)
