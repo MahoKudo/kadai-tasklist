@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Task; //indexアクションでModelの一覧を取得するため
 
+use Illuminate\Support\Facades\Auth;//ログインした人が使えるように
+
+
 class TasksController extends Controller
 {
     /**
