@@ -17,10 +17,21 @@ class TasksController extends Controller
      // getでmessages/にアクセスされた場合の「一覧表示処理」
     public function index()
     {
-        //タスク一覧取得
-        $tasks=Task::orderBy('id','desc')->paginate(25);
+        $tasks=[];
+        
+        if (\Auth::check()){ //認証済みの場合
+        
+        //認証済みユーザを取得/ログインしているかしていないか
+        $user = \Auth::user();
+        
+        //自分のタスクのみ取得して一覧表示
+        $tasks = $user->tasks()->orderBy('id','desc')->get();
+        
+       
+        }
         //タスク一覧ビューでそれを表示
-        return view('tasks.index',['tasks'=>$tasks,]);//第二引数にはそのViewに渡したいデータの配列を指定
+        return view('dashboard',['tasks'=>$tasks,]);//第二引数にはそのViewに渡したいデータの配列を指定
+    
     }
 //配列型の構造[キー値=>値]でキー名を指定すると値を取得出来るようになる
     /**
@@ -31,6 +42,7 @@ class TasksController extends Controller
     // getでmessages/createにアクセスされた場合の「新規登録画面表示処理」
     public function create()
     {
+        
         $task = new Task;
         
         //タスク作成ビューを表示
@@ -51,11 +63,17 @@ class TasksController extends Controller
             'status' => 'required|max:255', //カラム追加に伴い記入
             ]);
             
+        //認証済みユーザのタスクとして作成(リクエストされた値を元に作成)
+        $request->user()->tasks()->create([
+            'status' => $request->status,
+            'content' => $request->content,
+            ]);
+        
         //タスクを作成
-        $task = new Task;
-        $task->status = $request->status; //カラム追加に伴い記入
-        $task->content = $request->content;
-        $task->save();
+        //$task = new Task;
+        //$task->status = $request->status; //カラム追加に伴い記入
+        //$task->content = $request->content;
+        //$task->save();
         
         //トップページへリダイレクトさせる
         return redirect('/');
@@ -132,8 +150,15 @@ class TasksController extends Controller
     {
         //idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
+        
+        //認証済みユーザ(閲覧者)がそのタスクの所有者である場合は投稿を削除
+        
+        if(\Auth::id() === $task->user_id) {
+            $task->delete();
+            return back()
+                ->with('success', 'Delete Successful');        }
         //タスクを削除
-        $task->delete();
+        //$task->delete();
         
         //トップページへリダイレクト
         return redirect('/');
@@ -141,3 +166,4 @@ class TasksController extends Controller
     //destroyアクションはredirectしているのでViewは不要
     //削除ボタンの設置はshow.blade.phpへ
 }
+

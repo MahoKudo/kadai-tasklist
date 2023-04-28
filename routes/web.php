@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\TasksController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,13 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-});
+Route::get('/', [TasksController::class, 'index']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [TasksController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 /*Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,6 +30,8 @@ Route::get('/dashboard', function () {
 
 require __DIR__.'/auth.php';
 
+/*認証を必要とするルーティングループ
+認証済みのユーザだけがこれらのアクションにアクセス可能*/
 Route::group(['middleware' => ['auth']], function () {                                    // 追記
     Route::resource('tasks', TasksController::class,);     // 追記
 });                                                                                       // 追記
